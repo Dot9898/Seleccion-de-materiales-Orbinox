@@ -7,14 +7,13 @@ import base64
 from io import BytesIO
 import streamlit as st
 from streamlit_searchbox import st_searchbox
-from app.backend import get_data
-from app.backend import make_fluid_search
+from backend import get_data
+from backend import make_fluid_search
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 LOGO_WIDTH = 200
 QUALITY_COLOR_WIDTH = 12
-
 
 @st.cache_resource
 def load_images():
