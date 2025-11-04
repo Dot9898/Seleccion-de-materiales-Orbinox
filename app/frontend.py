@@ -109,7 +109,7 @@ def generate_title_and_logo(images):
 
 def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
     st.write('')
-    dropdown_column, search_column = st.columns([1, 3])
+    search_column, dropdown_column = st.columns([3, 1])
 
     with dropdown_column:
         selected_family = None
@@ -124,7 +124,7 @@ def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
                                         label_visibility = 'collapsed', 
                                         accept_new_options = False, 
                                         index = None, 
-                                        placeholder = 'Tipo de fluido', 
+                                        placeholder = 'Buscar por tipo (opcional)', 
                                         key = 'fluid_family_dropdown')
         if selected_family is not None:
             st.session_state['fluid_source'] = 'dropdown'
@@ -171,7 +171,7 @@ def generate_checkboxes_and_materials(selected_fluid, images):
     #defaulteen a True al escribir o seleccionar una búsqueda, y no se reinicien hasta que haya otra interacción de usuario.
     #Usar last_only como valor default soluciona esto.
     with checkboxes_column:
-        only_resistant = st.checkbox('Mostrar solo materiales más resistentes', 
+        only_resistant = st.checkbox('Mostrar solo los materiales más resistentes', 
                                      value = st.session_state['last_only_resistant'], 
                                      key = 'only_resistant')
         only_inOrbinox = st.checkbox('Mostrar solo materiales disponibles en Orbinox', 
