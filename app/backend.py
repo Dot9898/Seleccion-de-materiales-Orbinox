@@ -10,6 +10,8 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 
 
 class Material:
+
+    all = []
     
     def __init__(self, name):
         self.name = name
@@ -27,6 +29,8 @@ class Material:
 
 class Fluid: #arreglar conversión de pdf a excel
 
+    all = []
+    initials = set()
     families = set()
 
     def __init__(self, name):
@@ -87,7 +91,7 @@ class Fluid: #arreglar conversión de pdf a excel
         return(materials_to_show, families_to_show)
 
 class Resistance:
-    
+
     resistance_details = ({(4, 3): 'Resistente', (4, 2): 'Resistente hasta 48 C', (4, 1): 'Resistente hasta 22 C', 
                            (3, 3): 'Aceptable', (3, 2): 'Aceptable hasta 48 C', (3, 1): 'Aceptable hasta 22 C', 
                            (2, 3): 'Poco resistente', (2, 2): 'Poco resistente hasta 48 C', (2, 1): 'Poco resistente hasta 22 C',
@@ -121,8 +125,6 @@ def clean_string(string):
 
 def _load_data():
 
-    fluids = []
-    materials = []
     with open(ROOT_PATH / 'data' / 'values.csv', mode ='r', encoding = 'utf-8') as file:
         csv_values = csv.reader(file)
         for line in csv_values:
@@ -135,31 +137,33 @@ def _load_data():
                 for material_name in line:
                     if line.index(material_name) >= 3:
                         material = Material(material_name) #agregar duplex 2205, super duplex 2507
-                        materials.append(material)
-                        material.index = materials.index(material)
+                        Material.all.append(material)
+                        material.index = Material.all.index(material)
                 continue
             else:
                 fluid_name = line[2]
                 fluid = Fluid(fluid_name)
-                fluids.append(fluid)
+                Fluid.all.append(fluid)
+                fluid.initial = unidecode(fluid.name)[0].upper()
+                Fluid.initials.add(fluid.initial)
                 fluid.index = csv_values.line_num - 4
                 fluid_family = line[1]
                 fluid.family = 'Otros' if fluid_family == '' else fluid_family
                 Fluid.families.add(fluid.family)
                 fluid.temperature = {}
-                for material in materials:
+                for material in Material.all:
                     temperature = line[3 + material.index]
                     fluid.temperature[material] = int(temperature) if temperature != '' else 3
     
-    for material in materials:
+    for material in Material.all:
         material.is_inOrbinox = False if is_material_inOrbinox[material.index] == 'No' else True
         material.family = material_families[material.index]
 
     fluid_name_to_Fluid = {}
-    for fluid in fluids:
+    for fluid in Fluid.all:
         fluid_name_to_Fluid[fluid.name] = fluid
     material_name_to_Material = {}
-    for material in materials:
+    for material in Material.all:
         material_name_to_Material[material.name] = material
 
     with open(ROOT_PATH / 'data' / 'colors.csv', mode ='r', encoding = 'utf-8') as file:
@@ -167,19 +171,23 @@ def _load_data():
         for line in csv_colors:
             if csv_colors.line_num in [1, 2, 3]: #Headers
                 continue
-            fluid = fluids[csv_colors.line_num - 4]
+            fluid = Fluid.all[csv_colors.line_num - 4]
             fluid.quality = {}
             fluid.resistance = {}
-            for material in materials:
+            for material in Material.all:
                 quality = int(line[3 + material.index])
                 fluid.quality[material] = quality
                 fluid.resistance[material] = Resistance(fluid.quality[material], fluid.temperature[material])
 
-    fluids = sorted(fluids, key = lambda fluid: clean_string(fluid.name))
-    
+    fluids = sorted(Fluid.all, key = lambda fluid: clean_string(fluid.name)) #Los índices fluid.index y material.index quedan inutilizables
+    materials = sorted(Material.all, key = lambda material: clean_string(material.name))
+    fluid_families = sorted(Fluid.families, key = lambda family: clean_string(family))
+    fluid_initials = sorted(Fluid.initials)
+
     return({'fluids': fluids, 
             'materials': materials, 
-            'fluid_families': sorted(Fluid.families, key = lambda family: clean_string(family)), 
+            'fluid_families': fluid_families, 
+            'fluid_initials': fluid_initials, 
             'fluid_name_to_Fluid': fluid_name_to_Fluid, 
             'material_name_to_Material': material_name_to_Material})
 
@@ -222,7 +230,23 @@ def get_data():
 
 
 
+def test():
+    data = _load_data()
+    fluids = data['fluids']
+    initials = set()
+    for fluid in fluids:
+        initials.add(fluid.name[0])
+    initials = sorted(initials)
+    print(initials)
+    #for fluid in fluids:
+    #    print(fluid)
 
+#unidecode(string)
+
+
+#test()
+
+#'fluids', 'materials', 'fluid_families', 'fluid_name_to_Fluid', 'material_name_to_Material'
 
 
 

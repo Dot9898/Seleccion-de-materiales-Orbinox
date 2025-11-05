@@ -1,6 +1,6 @@
 
 #encoding: utf-8
-
+from time import sleep
 from pathlib import Path
 from PIL import Image
 import base64
@@ -14,6 +14,7 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 LOGO_WIDTH = 200
 QUALITY_COLOR_WIDTH = 12
+
 
 @st.cache_resource
 def load_images():
@@ -129,17 +130,17 @@ def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
         if selected_family is not None:
             st.session_state['fluid_source'] = 'dropdown'
             st.session_state['selected_family'] = selected_family
-        else:
+        elif st.session_state['fluid_source'] != 'initial':
             st.session_state['fluid_source'] = None
         
     with search_column: #arreglar la alineación con el dropdown
         searched_fluid = None
         search_function = make_fluid_search(fluids)
         searched_fluid = st_searchbox(search_function, 
-                                        placeholder = 'Buscar fluido...', 
-                                        clear_on_submit = True, 
-                                        edit_after_submit = 'option', 
-                                        key = 'fluids_searchbox')
+                                      placeholder = 'Buscar fluido...', 
+                                      clear_on_submit = True, 
+                                      edit_after_submit = 'option', 
+                                      key = 'fluids_searchbox')
         if searched_fluid in fluid_name_to_Fluid:
             st.session_state['fluid_source'] = 'search'
             st.session_state['selected_fluid'] = fluid_name_to_Fluid[searched_fluid]
@@ -148,7 +149,33 @@ def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
             st.session_state['searched'] = False
         st.session_state['fluids_searchbox']['result'] = None
 
-def generate_buttons(fluids, selected_family):
+def generate_letter_buttons(fluid_initials):
+    selected_initial = None
+    initials_columns = st.columns([1]*len(fluid_initials))
+    for index in range(len(fluid_initials)):
+        current_column = initials_columns[index]
+        initial = fluid_initials[index]
+        with current_column:
+            if st.button(initial):
+                selected_initial = initial
+    if selected_initial is not None:
+        st.session_state['fluid_source'] = 'initial'
+        st.session_state['selected_initial'] = selected_initial
+        st.session_state['searched'] = True #Reusa el sistema de la searchbox para que al usar otro fluid_source, el dropdown se resetee
+
+def generate_fluids_buttons_by_initial(fluids, selected_initial):
+    fluids_columns = st.columns([1]*8)
+    column_counter = 0
+    for fluid in fluids:
+        if fluid.initial == selected_initial:
+            current_column = fluids_columns[column_counter%8]
+            with current_column:
+                if st.button(fluid.name):
+                    st.session_state['selected_fluid'] = fluid
+                    print('testok')
+            column_counter = column_counter + 1
+
+def generate_fluids_buttons_by_family(fluids, selected_family):
     fluids_columns = st.columns([1]*8)
     column_counter = 0
     for fluid in fluids:
@@ -250,6 +277,7 @@ images = load_images()
 materials = data['materials']
 fluids = data['fluids']
 fluid_families = data['fluid_families']
+fluid_initials = data['fluid_initials']
 fluid_name_to_Fluid = data['fluid_name_to_Fluid']
 material_name_to_Material = data['material_name_to_Material']
 st.set_page_config(layout = 'wide')
@@ -258,6 +286,8 @@ if 'fluid_source' not in st.session_state:
     st.session_state['fluid_source'] = None
 if 'selected_family' not in st.session_state:
     st.session_state['selected_family'] = None
+if 'selected_initial' not in st.session_state:
+    st.session_state['selected_initial'] = None
 if 'selected_fluid' not in st.session_state:
     st.session_state['selected_fluid'] = None
 if 'searched' not in st.session_state:
@@ -270,9 +300,13 @@ if 'last_only_resistant' not in st.session_state:
 
 generate_title_and_logo(images)
 generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid)
+generate_letter_buttons(fluid_initials)
+
+if st.session_state['fluid_source'] == 'initial':
+    generate_fluids_buttons_by_initial(fluids, st.session_state['selected_initial'])
 
 if st.session_state['fluid_source'] == 'dropdown':
-    generate_buttons(fluids, st.session_state['selected_family'])
+    generate_fluids_buttons_by_family(fluids, st.session_state['selected_family'])
 
 if st.session_state['selected_fluid'] is not None:
     generate_checkboxes_and_materials(st.session_state['selected_fluid'], images)

@@ -1,17 +1,22 @@
 
+from pathlib import Path
 import csv
 from openpyxl import load_workbook
+
+ROOT_PATH = Path(__file__).resolve().parent.parent
+DATA_PATH = ROOT_PATH / 'data'
+
 
 color_to_quality = {'wh':0, 'oj':1, 'yl':2, 'bl':3, 'gr':4}
 rgb_to_color = {'FFFFFFFF':'wh', 'FFF79239':'oj', 'FF8AC53F':'gr', 'FF5CC4EB':'bl', 'FFFFF100':'yl', 'FFE9F6FD':'wh', '00000000':'wh'}
 
-wb = load_workbook(r"C:\Users\Orbinox2\Desktop\Diego\Prototipo software materiales Orbinox\Resistencias_quimicas_processed.xlsx", data_only=True)
+wb = load_workbook(ROOT_PATH / 'data' / 'resistencias_quimicas.xlsx', data_only=True)
 ws = wb.active
 
 #arreglar conversión pdf a excel
 #arreglar relative paths
-with (open(r"c:\Users\Orbinox2\Desktop\Diego\Prototipo software materiales Orbinox\values.csv", "w", newline="", encoding="utf-8") as f_values, 
-      open(r"c:\Users\Orbinox2\Desktop\Diego\Prototipo software materiales Orbinox\colors.csv", "w", newline="", encoding="utf-8") as f_colors):
+with (open(ROOT_PATH / 'data' / 'values.csv', "w", newline="", encoding="utf-8") as f_values, 
+      open(ROOT_PATH / 'data' / 'colors.csv', "w", newline="", encoding="utf-8") as f_colors):
     
     writer_values = csv.writer(f_values)
     writer_colors = csv.writer(f_colors)
