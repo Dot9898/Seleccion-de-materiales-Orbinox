@@ -172,7 +172,6 @@ def generate_fluids_buttons_by_initial(fluids, selected_initial):
             with current_column:
                 if st.button(fluid.name):
                     st.session_state['selected_fluid'] = fluid
-                    print('testok')
             column_counter = column_counter + 1
 
 def generate_fluids_buttons_by_family(fluids, selected_family):
@@ -293,9 +292,9 @@ if 'selected_fluid' not in st.session_state:
 if 'searched' not in st.session_state:
     st.session_state['searched'] = False
 if 'last_only_inOrbinox' not in st.session_state:
-    st.session_state['last_only_inOrbinox'] = True
+    st.session_state['last_only_inOrbinox'] = False
 if 'last_only_resistant' not in st.session_state:
-    st.session_state['last_only_resistant'] = True
+    st.session_state['last_only_resistant'] = False
 
 
 generate_title_and_logo(images)

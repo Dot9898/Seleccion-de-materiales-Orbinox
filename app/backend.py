@@ -225,7 +225,7 @@ def make_fluid_search(fluids):
     return(fluid_search)
 
 @lru_cache(maxsize = 1)
-def get_data(edit_this_string_to_force_cache_clear_in_streamlit_cloud = 'v2'):
+def get_data(edit_this_string_to_force_cache_clear_in_streamlit_cloud = 'v3'):
     return(_load_data())
 
 
