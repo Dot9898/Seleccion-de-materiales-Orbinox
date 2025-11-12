@@ -1,6 +1,6 @@
 
 #encoding: utf-8
-from time import sleep
+
 from pathlib import Path
 from PIL import Image
 import base64
@@ -26,7 +26,6 @@ def load_images():
     images['red'] = Image.open(IMG_PATH / 'red.jpg')
     images['22'] = Image.open(IMG_PATH / 'twenty_two.jpg')
     images['48'] = Image.open(IMG_PATH / 'forty_eight.jpg')
-    images['empty'] = Image.open(IMG_PATH / 'empty.png')
     return(images)
 
 def img_to_html_jpg(img, width):
@@ -40,10 +39,9 @@ def img_to_html_jpg(img, width):
 def img_to_base64(img):
     buffer = BytesIO()
     img.save(buffer, format="PNG")
-    return base64.b64encode(buffer.getvalue()).decode()
+    return(base64.b64encode(buffer.getvalue()).decode())
 
 def print_text_and_icon_inline(text, temp_img, reverse):
-
     temp_html = ''
     if temp_img is not None:
         temp_html = img_to_html_jpg(temp_img, 20)

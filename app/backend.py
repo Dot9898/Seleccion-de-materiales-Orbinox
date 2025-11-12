@@ -7,6 +7,7 @@ from unidecode import unidecode
 from functools import lru_cache
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
+DATA_PATH = ROOT_PATH / 'data'
 
 
 class Material:
@@ -125,7 +126,7 @@ def clean_string(string):
 
 def _load_data():
 
-    with open(ROOT_PATH / 'data' / 'values.csv', mode ='r', encoding = 'utf-8') as file:
+    with open(DATA_PATH / 'values.csv', mode ='r', encoding = 'utf-8') as file:
         csv_values = csv.reader(file)
         for line in csv_values:
             if csv_values.line_num == 1: #Headers
@@ -166,7 +167,7 @@ def _load_data():
     for material in Material.all:
         material_name_to_Material[material.name] = material
 
-    with open(ROOT_PATH / 'data' / 'colors.csv', mode ='r', encoding = 'utf-8') as file:
+    with open(DATA_PATH / 'colors.csv', mode ='r', encoding = 'utf-8') as file:
         csv_colors = csv.reader(file)
         for line in csv_colors:
             if csv_colors.line_num in [1, 2, 3]: #Headers
@@ -225,7 +226,7 @@ def make_fluid_search(fluids):
     return(fluid_search)
 
 @lru_cache(maxsize = 1)
-def get_data(edit_this_string_to_force_cache_clear_in_streamlit_cloud = 'v3'):
+def get_data(edit_this_string_to_force_cache_clear_in_streamlit_cloud = 'v4'):
     return(_load_data())
 
 
