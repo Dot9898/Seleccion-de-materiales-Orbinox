@@ -14,6 +14,7 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 LOGO_WIDTH = 200
 QUALITY_COLOR_WIDTH = 12
+DIVIDER_COLOR = '#66c6f3fa'
 
 
 @st.cache_resource
@@ -78,6 +79,18 @@ def print_icon_and_text_in_column(icon, text):
     with text_column:
         st.write(text)
 
+def horizontal_divider(color, thickness, margin):
+    st.markdown(
+        f"""
+        <hr style="
+            border: none;
+            border-top: {thickness}px solid {color};
+            margin: {margin};
+        ">
+        """,
+        unsafe_allow_html=True,
+    )
+
 def generate_title_and_logo(images):
     title_column, logo_column = st.columns([3, 1])
 
@@ -126,7 +139,7 @@ def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
                                         placeholder = 'Buscar por tipo (opcional)', 
                                         key = 'fluid_family_dropdown')
         if selected_family is not None:
-            st.session_state['fluid_source'] = 'dropdown'
+            st.session_state['fluid_source'] = 'family'
             st.session_state['selected_family'] = selected_family
         elif st.session_state['fluid_source'] != 'initial':
             st.session_state['fluid_source'] = None
@@ -161,31 +174,24 @@ def generate_letter_buttons(fluid_initials):
         st.session_state['selected_initial'] = selected_initial
         st.session_state['searched'] = True #Reusa el sistema de la searchbox para que al usar otro fluid_source, el dropdown se resetee
 
-def generate_fluids_buttons_by_initial(fluids, selected_initial):
-    fluids_columns = st.columns([1]*8)
-    column_counter = 0
-    for fluid in fluids:
-        if fluid.initial == selected_initial:
-            current_column = fluids_columns[column_counter%8]
+def generate_fluids_buttons_by_condition(fluids, condition, selected_condition): #Crea los botones que empiezan con A, 
+                                                                                 #si condition == 'initial' #y selected_condition == 'A'
+    if condition == 'family':
+        fluids_with_condition = (fluid for fluid in fluids if fluid.family == selected_condition)
+    if condition == 'initial':
+        fluids_with_condition = (fluid for fluid in fluids if fluid.initial == selected_condition)
+    while True:
+        for current_column in st.columns([1]*8):
+            try:
+                fluid = next(fluids_with_condition)
+            except:
+                return()
             with current_column:
                 if st.button(fluid.name):
                     st.session_state['selected_fluid'] = fluid
-            column_counter = column_counter + 1
 
-def generate_fluids_buttons_by_family(fluids, selected_family):
-    fluids_columns = st.columns([1]*8)
-    column_counter = 0
-    for fluid in fluids:
-        if fluid.family == selected_family:
-            current_column = fluids_columns[column_counter%8]
-            with current_column:
-                if st.button(fluid.name):
-                    st.session_state['selected_fluid'] = fluid
-            column_counter = column_counter + 1
 
 def generate_checkboxes_and_materials(selected_fluid, images):
-    if st.session_state['fluid_source'] == 'dropdown':
-        st.write('')
     st.header(selected_fluid)
 
     materials_columns = st.columns([2, 2, 2, 1, 1])
@@ -298,12 +304,15 @@ if 'last_only_resistant' not in st.session_state:
 generate_title_and_logo(images)
 generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid)
 generate_letter_buttons(fluid_initials)
+horizontal_divider(DIVIDER_COLOR, 2, '0')
+
+if st.session_state['fluid_source'] == 'family':
+    generate_fluids_buttons_by_condition(fluids, 'family', st.session_state['selected_family'])
+    horizontal_divider(DIVIDER_COLOR, 2, '0')
 
 if st.session_state['fluid_source'] == 'initial':
-    generate_fluids_buttons_by_initial(fluids, st.session_state['selected_initial'])
-
-if st.session_state['fluid_source'] == 'dropdown':
-    generate_fluids_buttons_by_family(fluids, st.session_state['selected_family'])
+    generate_fluids_buttons_by_condition(fluids, 'initial', st.session_state['selected_initial'])
+    horizontal_divider(DIVIDER_COLOR, 2, '0')
 
 if st.session_state['selected_fluid'] is not None:
     generate_checkboxes_and_materials(st.session_state['selected_fluid'], images)
