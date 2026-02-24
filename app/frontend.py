@@ -15,6 +15,9 @@ IMG_PATH = ROOT_PATH / 'img'
 LOGO_WIDTH = 200
 QUALITY_COLOR_WIDTH = 12
 DIVIDER_COLOR = '#66c6f3fa'
+DIVIDER_AND_BUTTONS_SPACING = 18
+EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL = 1000
+
 
 
 @st.cache_resource
@@ -42,27 +45,31 @@ def img_to_base64(img):
     img.save(buffer, format="PNG")
     return(base64.b64encode(buffer.getvalue()).decode())
 
+def scroll_to_bottom():
+    st.markdown('<meta http-equiv = "refresh" content = "0; url = #b">', unsafe_allow_html = True)
+
+def add_vertical_spacing(pixels):
+    st.markdown(f"<div style='height: {pixels}px;'></div>", unsafe_allow_html = True)
+
 def print_text_and_icon_inline(text, temp_img, reverse):
     temp_html = ''
     if temp_img is not None:
         temp_html = img_to_html_jpg(temp_img, 20)
-    
+
     if not reverse:
         st.markdown(f"""
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span style="font-size: 1rem; line-height: 1;">{text}</span>
-                        {temp_html}
-                    </div>
-                    """,
-                    unsafe_allow_html=True)
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+                <span style="font-size: 1rem; line-height: 1;">{text}</span>
+                {temp_html}
+            </div>
+        """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span style="font-size: 1rem; line-height: 1;">{temp_html}</span>
-                        {text}
-                    </div>
-                    """,
-                    unsafe_allow_html=True)
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+                {temp_html}
+                <span style="font-size: 1rem; line-height: 1;">{text}</span>
+            </div>
+        """, unsafe_allow_html=True)
 
 def print_material_and_quality_in_columns(material, color_image, temperature_icon):
     color_column, material_column = st.columns([1, 14])
@@ -189,7 +196,7 @@ def generate_fluids_buttons_by_condition(fluids, condition, selected_condition):
             with current_column:
                 if st.button(fluid.name):
                     st.session_state['selected_fluid'] = fluid
-
+                    scroll_to_bottom()
 
 def generate_checkboxes_and_materials(selected_fluid, images):
     st.header(selected_fluid)
@@ -263,15 +270,6 @@ def generate_legend(images):
                 print_icon_and_text_in_column(icon, text)
 
 
-def print_state():
-    if 'only_inOrbinox' in st.session_state:
-        only = st.session_state['only_inOrbinox']
-    else:
-        only = 'empty'
-    last_only = st.session_state['last_only_inOrbinox']
-    print('only', only, 'last_only', last_only)
-
-
 #-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -305,6 +303,7 @@ generate_title_and_logo(images)
 generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid)
 generate_letter_buttons(fluid_initials)
 horizontal_divider(DIVIDER_COLOR, 2, '0')
+add_vertical_spacing(DIVIDER_AND_BUTTONS_SPACING)
 
 if st.session_state['fluid_source'] == 'family':
     generate_fluids_buttons_by_condition(fluids, 'family', st.session_state['selected_family'])
@@ -314,14 +313,18 @@ if st.session_state['fluid_source'] == 'initial':
     generate_fluids_buttons_by_condition(fluids, 'initial', st.session_state['selected_initial'])
     horizontal_divider(DIVIDER_COLOR, 2, '0')
 
+#Bottom scroll on button click
+st.markdown('<div id = "b"></div>', unsafe_allow_html = True)
+
 if st.session_state['selected_fluid'] is not None:
     generate_checkboxes_and_materials(st.session_state['selected_fluid'], images)
     generate_legend(images)
+else:
+    add_vertical_spacing(EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL)
+
 
 if st.session_state['searched']:
     st.rerun()
-
-
 
 
 
