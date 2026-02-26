@@ -17,6 +17,7 @@ QUALITY_COLOR_WIDTH = 12
 DIVIDER_COLOR = '#66c6f3fa'
 DIVIDER_AND_BUTTONS_SPACING = 18
 EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL = 1000
+SPECIAL_FLUIDS = ['Agua blanca', 'Agua de mar', f'Ácido sulfúrico (75% - 100%)', 'Cal']
 
 
 
@@ -183,6 +184,21 @@ def generate_letter_buttons(fluid_initials):
 
 def generate_fluids_buttons_by_condition(fluids, condition, selected_condition): #Crea los botones que empiezan con A, 
                                                                                  #si condition == 'initial' #y selected_condition == 'A'
+    
+    if condition == 'special':
+        fluids_with_condition = [fluid for fluid in fluids if fluid.name in selected_condition]
+        columns = st.columns(len(selected_condition) * [1])
+        for index in range(len(fluids_with_condition)):
+            fluid = fluids_with_condition[index]
+            current_column = columns[index]
+            key = fluid.name + '_special'
+            with current_column:
+                if st.button(fluid.name, width = 'stretch', key = key):
+                    st.session_state['selected_fluid'] = fluid
+                    st.session_state['fluid_source'] = 'special'
+                    scroll_to_bottom()
+        return()
+    
     if condition == 'family':
         fluids_with_condition = (fluid for fluid in fluids if fluid.family == selected_condition)
     if condition == 'initial':
@@ -190,17 +206,15 @@ def generate_fluids_buttons_by_condition(fluids, condition, selected_condition):
     while True:
         for current_column in st.columns([1]*8):
             try:
-                fluid = next(fluids_with_condition)
+                fluid = next(fluids_with_condition) #Why did I do it this way
             except:
                 return()
             with current_column:
-                if st.button(fluid.name):
+                if st.button(fluid.name, width = 'stretch'):
                     st.session_state['selected_fluid'] = fluid
                     scroll_to_bottom()
 
 def generate_checkboxes_and_materials(selected_fluid, images):
-    st.header(selected_fluid)
-
     materials_columns = st.columns([2, 2, 2, 1, 1])
     checkboxes_column = materials_columns[4]
 
@@ -302,22 +316,33 @@ if 'last_only_resistant' not in st.session_state:
 generate_title_and_logo(images)
 generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid)
 generate_letter_buttons(fluid_initials)
+generate_fluids_buttons_by_condition(fluids, 'special', SPECIAL_FLUIDS)
 horizontal_divider(DIVIDER_COLOR, 2, '0')
-add_vertical_spacing(DIVIDER_AND_BUTTONS_SPACING)
 
 if st.session_state['fluid_source'] == 'family':
+    add_vertical_spacing(DIVIDER_AND_BUTTONS_SPACING)
     generate_fluids_buttons_by_condition(fluids, 'family', st.session_state['selected_family'])
     horizontal_divider(DIVIDER_COLOR, 2, '0')
 
-if st.session_state['fluid_source'] == 'initial':
+elif st.session_state['fluid_source'] == 'initial':
+    add_vertical_spacing(DIVIDER_AND_BUTTONS_SPACING)
     generate_fluids_buttons_by_condition(fluids, 'initial', st.session_state['selected_initial'])
     horizontal_divider(DIVIDER_COLOR, 2, '0')
+
 
 #Bottom scroll on button click
 st.markdown('<div id = "b"></div>', unsafe_allow_html = True)
 
-if st.session_state['selected_fluid'] is not None:
-    generate_checkboxes_and_materials(st.session_state['selected_fluid'], images)
+fluid = st.session_state['selected_fluid']
+if fluid is not None:
+    st.header(fluid.name)
+    if fluid.name in SPECIAL_FLUIDS:
+        pressure_column, temperature_column, empty_column = st.columns([1, 1, 2])
+        with pressure_column:
+            st.slider('Presión')
+        with temperature_column:
+            st.slider('Temperatura')
+    generate_checkboxes_and_materials(fluid, images)
     generate_legend(images)
 else:
     add_vertical_spacing(EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL)
@@ -325,6 +350,5 @@ else:
 
 if st.session_state['searched']:
     st.rerun()
-
 
 
