@@ -1,0 +1,8 @@
+
+densidad acido sulfurico c% a 25 C
+x g/cm3
+1000x g/L
+2000 ppm de cloruros son 1000x * 2000 / 1 000 000 = 2x g/L
+
+98% 1.84 g/cm3, 3.68 g/L de cloruros
+20% 1.16 g/cm3, 2.32 g/L de cloruros
