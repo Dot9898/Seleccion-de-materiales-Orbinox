@@ -1,0 +1,45 @@
+
+
+{'Glass': 'Vidrio', 
+'ETFE': 'ETFE', 
+'PVDF': 'PVDF', 
+'ECTFE': 'ECTFE', 
+'PTFE-PFA': 'PTFE - PFA (teflón)', 
+'Butyl-rubber': 'Butilo', 
+'PPL': 'Polipropileno', 
+'Hard rubber - neoprene': 'Neopreno - Goma dura (ebonita)', 
+'Cast iron': 'Hierro fundido', 
+'Boiling point': 'Punto de ebullición', 
+
+'Q': 'Caucho natural', 
+'B-300-325': 'EPDM', 
+'237': 'Hypalon', 
+'226': 'Viton', 
+'214-226': 'Viton con recubrimiento de PTFE', 
+'214-300': 'Butilo con recubrimiento de PTFE', 
+
+'AISI 316': '316', 
+'ASTM 317L': '317', 
+'904L': '904L', 
+'254 SMO': '254 SMO', 
+'654 SMO': '654 SMO', 
+'Sandvik SAF 2205': 'Dúplex 2205', 
+'4565': '1.4565 (alloy 24)', 
+
+'AISI 316 2000': '316 (2000 ppm de cloruros)', 
+'904L 2000': '904L (2000 ppm de cloruros)', 
+'654 SMO 2000': '654 SMO (2000 ppm de cloruros)', 
+'254 SMO 2000': '254 SMO (2000 ppm de cloruros)'}
+
+
+
+
+ETFE -> Halar (marca)
+PPL polipropileno no verificado
+
+
+
+
+
+
+

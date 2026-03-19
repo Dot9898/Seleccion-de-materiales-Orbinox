@@ -6,6 +6,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 import streamlit as st
+from style import set_style
 from streamlit_searchbox import st_searchbox
 from backend import get_data
 from backend import make_fluid_search
@@ -293,6 +294,8 @@ fluid_families = data['fluid_families']
 fluid_initials = data['fluid_initials']
 fluid_name_to_Fluid = data['fluid_name_to_Fluid']
 material_name_to_Material = data['material_name_to_Material']
+
+set_style()
 st.set_page_config(layout = 'wide')
 
 if 'fluid_source' not in st.session_state:

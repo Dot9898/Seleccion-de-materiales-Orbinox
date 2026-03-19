@@ -1,0 +1,22 @@
+
+
+/* Button text */
+div.stButton > button {
+    color: #3e4c59 !important;
+}
+
+/* Dropdown options and selected value */
+li[role = 'option'] {
+    color: #3e4c59 !important;
+}
+
+div.stSelectbox div[data-baseweb = 'select'] > div {
+    color: #3e4c59 !important;
+}
+
+
+/* Only normal Markdown text */
+div[data-testid="stMarkdownContainer"] p {
+    color: #3e4c59 !important;
+}
+
