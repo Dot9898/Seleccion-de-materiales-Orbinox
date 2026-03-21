@@ -78,7 +78,7 @@ def generate_toggles():
             key = f'{family} toggle'
             st.toggle(family, 
                       key = key, 
-                      value = True if family == 'Metales' else False, 
+                      value = True if family == 'Cauchos' else False, 
                       label_visibility = 'visible', 
                       help=None)
 
@@ -89,7 +89,7 @@ def generate_graph_from_toggles():
         if st.session_state[key]:
             curves_to_show = curves_to_show + FAMILY_TO_CURVE_NAME[family]
     graph = backend_sulfuric.generate_graph(curves_to_show)
-    st.altair_chart(graph, width = 'stretch', height = GRAPH_HEIGHT)
+    st.altair_chart(graph, width = 'stretch', height = GRAPH_HEIGHT)#, key = 'Gráfico', selection_mode = 'clicked_point', on_select = 'rerun')
 
 def generate_sliders():
     
@@ -187,6 +187,7 @@ with graph_column:
 with sliders_column:
     generate_sliders()
     print_resistant_materials(st.session_state['Concentración_slider'], st.session_state['Temperatura_slider'])
+
 
 
 
