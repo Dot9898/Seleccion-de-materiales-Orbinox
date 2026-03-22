@@ -1,9 +1,9 @@
 
 
-FAMILIES = ['Metales', 'Cauchos', 'Polímeros', 'Metales (ácido con cloruros)', 'Otros']
+FAMILIES = ['Metales', 'Cauchos', 'Polímeros', 'Otros'] #'Metales (ácido con cloruros)' intentionally left out
 
-FAMILY_TO_CURVE_NAME = {
-'Metales': ['316', '317', '904L', '654 SMO', '254 SMO', '1.4565 (alloy 24)', 'Dúplex 2205', 'Hierro fundido'], 
+FAMILY_TO_CURVE_NAMES = {
+'Metales': ['316', '317', '904L', '654 SMO', '254 SMO', '1.4565 (alloy 24)', 'Duplex 2205', 'Hierro fundido'], 
 'Metales (ácido con cloruros)': ['316 (2000 ppm de cloruros)', '904L (2000 ppm de cloruros)', '654 SMO (2000 ppm de cloruros)', '254 SMO (2000 ppm de cloruros)'], 
 'Polímeros': ['ETFE', 'PTFE - PFA (teflón)', 'PVDF', 'ECTFE', 'Polipropileno', 'Viton con recubrimiento de PTFE', 'Butilo con recubrimiento de PTFE'], 
 'Cauchos': ['Butilo', 'Neopreno - Goma dura (ebonita)', 'Caucho natural', 'Viton', 'Hypalon', 'EPDM'], 
@@ -25,7 +25,7 @@ MONOTONE_COLOR_PALETTES = { #unused
 
 CURVE_NAME_TO_COLOR = {
 material: color
-for family, materials in FAMILY_TO_CURVE_NAME.items()
+for family, materials in FAMILY_TO_CURVE_NAMES.items()
 for material, color in zip(materials, COLOR_PALETTES[family])}
 
 FILE_NAME_TO_CURVE_NAME = {
@@ -52,13 +52,15 @@ FILE_NAME_TO_CURVE_NAME = {
 '904L': '904L', 
 '254 SMO': '254 SMO', 
 '654 SMO': '654 SMO', 
-'Sandvik SAF 2205': 'Dúplex 2205', 
+'Sandvik SAF 2205': 'Duplex 2205', 
 '4565': '1.4565 (alloy 24)', 
 
 'AISI 316 2000': '316 (2000 ppm de cloruros)', 
 '904L 2000': '904L (2000 ppm de cloruros)', 
 '654 SMO 2000': '654 SMO (2000 ppm de cloruros)', 
 '254 SMO 2000': '254 SMO (2000 ppm de cloruros)'}
+
+
 
 
 
