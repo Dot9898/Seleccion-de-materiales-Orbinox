@@ -6,32 +6,28 @@ from PIL import Image
 import base64
 from io import BytesIO
 import streamlit as st
+from style import set_style
 from streamlit_searchbox import st_searchbox
-from backend import get_data
+from backend import load_data
 from backend import make_fluid_search
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
+
 LOGO_WIDTH = 200
+NAVIGATION_MENU_HEIGHT = 35
+MIN_LOGO_HEIGHT = 100 - NAVIGATION_MENU_HEIGHT
+LOGO_HEIGHT = MIN_LOGO_HEIGHT + 0
+TITLE_HEIGHT_ALIGNED_WITH_LOGO = LOGO_HEIGHT + 28
+TITLE_HEIGHT = TITLE_HEIGHT_ALIGNED_WITH_LOGO
+
 QUALITY_COLOR_WIDTH = 12
-DIVIDER_COLOR = '#66c6f3fa'
+DIVIDER_COLOR = '#a1cae4'
 DIVIDER_AND_BUTTONS_SPACING = 18
 EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL = 1000
 SPECIAL_FLUIDS = ['Agua blanca', 'Agua de mar', f'Ácido sulfúrico (75% - 100%)', 'Cal']
 
 
-
-@st.cache_resource
-def load_images():
-    images = {}
-    images['logo'] = Image.open(IMG_PATH / 'Orbinox_logo.png')
-    images['blue'] = Image.open(IMG_PATH / 'blue.jpg')
-    images['lblue'] = Image.open(IMG_PATH / 'light_blue.jpg')
-    images['orange'] = Image.open(IMG_PATH / 'orange.jpg')
-    images['red'] = Image.open(IMG_PATH / 'red.jpg')
-    images['22'] = Image.open(IMG_PATH / 'twenty_two.jpg')
-    images['48'] = Image.open(IMG_PATH / 'forty_eight.jpg')
-    return(images)
 
 def img_to_html_jpg(img, width):
     buffer = BytesIO()
@@ -45,6 +41,19 @@ def img_to_base64(img):
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     return(base64.b64encode(buffer.getvalue()).decode())
+
+@st.cache_resource
+def load_images():
+    images = {}
+    images['logo'] = Image.open(IMG_PATH / 'Orbinox_logo.png')
+    images['logo_b64'] = img_to_base64(images['logo'])
+    images['blue'] = Image.open(IMG_PATH / 'blue.jpg')
+    images['lblue'] = Image.open(IMG_PATH / 'light_blue.jpg')
+    images['orange'] = Image.open(IMG_PATH / 'orange.jpg')
+    images['red'] = Image.open(IMG_PATH / 'red.jpg')
+    images['22'] = Image.open(IMG_PATH / 'twenty_two.jpg')
+    images['48'] = Image.open(IMG_PATH / 'forty_eight.jpg')
+    return(images)
 
 def scroll_to_bottom():
     st.markdown('<meta http-equiv = "refresh" content = "0; url = #b">', unsafe_allow_html = True)
@@ -99,33 +108,36 @@ def horizontal_divider(color, thickness, margin):
         unsafe_allow_html=True,
     )
 
+def generate_title():
+    st.markdown(f"""
+                <div style="display: flex; flex-direction: column; justify-content: flex-end; height: {TITLE_HEIGHT}px;">
+                    <h4 style="margin: 0; font-size: 2.9rem; font-weight: 450;">
+                        Resistencia química de materiales
+                    </h4>
+                </div>
+                """,
+                unsafe_allow_html = True)
+
+def generate_logo(images):
+    logo = images['logo_b64']
+    st.markdown(f"""
+                <div style="
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+                    height: {LOGO_HEIGHT}px;
+                ">
+                    <img src="data:image/webp;base64,{logo}" width="{LOGO_WIDTH}">
+                </div>
+                """,
+                unsafe_allow_html = True)
+
 def generate_title_and_logo(images):
     title_column, logo_column = st.columns([3, 1])
-
     with title_column:
-        st.markdown("""
-                    <div style="display: flex; flex-direction: column; justify-content: flex-end; height: 150px;">
-                        <h4 style="margin: 0; font-size: 3rem; font-weight: 450;">
-                            Selección de materiales
-                        </h4>
-                    </div>
-                    """,
-                    unsafe_allow_html=True)
-
+        generate_title()
     with logo_column:
-        logo = images['logo']
-        logo = img_to_base64(logo)
-        st.markdown(f"""
-                    <div style="
-                        display: flex;
-                        justify-content: flex-end;
-                        align-items: flex-end;
-                        height: 122px;
-                    ">
-                        <img src="data:image/png;base64,{logo}" width="{LOGO_WIDTH}">
-                    </div>
-                    """,
-                    unsafe_allow_html=True)
+        generate_logo(images)
 
 def generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid):
     st.write('')
@@ -175,7 +187,10 @@ def generate_letter_buttons(fluid_initials):
         current_column = initials_columns[index]
         initial = fluid_initials[index]
         with current_column:
-            if st.button(initial):
+            if st.button(initial, 
+                         key = f'{initial}_button', 
+                         width = 'stretch', 
+                         type = 'primary'):
                 selected_initial = initial
     if selected_initial is not None:
         st.session_state['fluid_source'] = 'initial'
@@ -210,7 +225,10 @@ def generate_fluids_buttons_by_condition(fluids, condition, selected_condition):
             except:
                 return()
             with current_column:
-                if st.button(fluid.name, width = 'stretch'):
+                if st.button(fluid.name, 
+                             key = f'{fluid.name}_button', 
+                             width = 'stretch', 
+                             type = 'secondary'):
                     st.session_state['selected_fluid'] = fluid
                     scroll_to_bottom()
 
@@ -287,7 +305,7 @@ def generate_legend(images):
 #-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
-data = get_data()
+data = load_data()
 images = load_images()
 materials = data['materials']
 fluids = data['fluids']
@@ -295,6 +313,8 @@ fluid_families = data['fluid_families']
 fluid_initials = data['fluid_initials']
 fluid_name_to_Fluid = data['fluid_name_to_Fluid']
 material_name_to_Material = data['material_name_to_Material']
+
+set_style()
 st.set_page_config(layout = 'wide')
 
 if 'fluid_source' not in st.session_state:

@@ -2,3 +2,6 @@ streamlit
 streamlit-searchbox
 pillow
 unidecode
+pandas
+numpy
+altair

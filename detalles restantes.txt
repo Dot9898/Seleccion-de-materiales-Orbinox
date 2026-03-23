@@ -1,0 +1,21 @@
+
+confirmar polipropileno
+agregar superduplex, (hastelloy C y titanio), (y alloy 20?)
+Hacer ácido sulfúrico - proceso LX SX EW
+
+agregar AGUA
+fix scroll to bottom extra spacing (invisible), look up water
+cambiar checkboxes por toggles
+agregar st.divider
+disclaimer
+colorear botón seleccionado y color letras pa diferenciar de botones de fluidos
+agregar ceniza (carbon activado en polvo)
+duplex, superduplex, rilsan
+pantallas estrechas y celulares (descuadrado de los botones, orden de las búsquedas)
+poner fotos colores in line y asegurar que funcionen con pantallas estrechas (multilínea se descuadra) (muy largo tapa el fluido siguiente)
+iconos modo oscuro
+chequear excel
+excel numero de prem(?)
+
+
+para colores aplicar callback on old selected button? es mala práctica? la otra op es una flag para cada botón y que el callback active la propia y desactive las demás, es acumular más código pero más claro (?)

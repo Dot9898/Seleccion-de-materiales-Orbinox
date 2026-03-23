@@ -5,17 +5,36 @@ showErrorDetails = 'full'
 [theme]
 base = 'light'
 
-primaryColor = '#1F84B5'
-backgroundColor = 'aliceblue' #'#F2F2F2'
-secondaryBackgroundColor = '#66c6f3fa'
-#'#0090D3'
-#'#1F84B5'
+primaryColor = '#a1cae4'
+backgroundColor = '#f0f8ff' #aliceblue
+secondaryBackgroundColor = '#a1cae4'
+
+
+#primaryColor = '#1F84B5'
+#secondaryBackgroundColor = '#66c6f3fa'
+
+
+#Extra buttons color = '#DCEAF5'
+
+#1 '#0090D3'
+#1 second Orbinox bottom '#a1cae4'
+#2 '#1F84B5'
+#alice bluer '#AEC6F7'
+#visual avg of 1 and 2 '#0F8BC8'
+#RGB exact avg of 1 and 2 '#108AC4'
+#orange to pair with alice bluer '#F2A65A'
+
+#grays with blue tone, pairs with '#a1cae4'
+#'#3e4c59'
+#'#5f6f7a'
+#'#4f5b66'
+#'#2f3e46'
 
 baseFontSize = 16
 baseFontWeight = 500
 
 
-
+#img design: overlay f0f8ff +20/45, saturation +30, round corners 20, resize and save webp
 
 
 
