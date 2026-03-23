@@ -264,17 +264,6 @@ def generate_graph(curves_to_show, highlighted_point_coordinates, chlorides_mess
 
 
 
-def get_resistant_materials(concentration, temperature):
-    resistant_materials = []
-    curves_by_name = load_curves()
-    for name, curve in curves_by_name.items():
-        if curve.is_resistant(concentration, temperature):
-            resistant_materials.append(name)
-
-    if 'Punto de ebullición' in resistant_materials:
-        resistant_materials.remove('Punto de ebullición')
-    return(resistant_materials)
-
 
 
 

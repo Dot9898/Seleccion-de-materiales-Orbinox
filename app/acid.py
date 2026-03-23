@@ -6,7 +6,7 @@ import base64
 from io import BytesIO
 import streamlit as st
 from style import set_style
-import backend_sulfuric
+from altair_graph import generate_graph, load_curves
 from constants import FAMILIES
 from constants import FAMILY_TO_CURVE_NAMES
 
@@ -15,7 +15,8 @@ IMG_PATH = ROOT_PATH / 'img'
 
 MAIN_TEXT_COLOR = '#3e4c59'
 LOGO_WIDTH = 200
-MIN_LOGO_HEIGHT = 100
+NAVIGATION_MENU_HEIGHT = 35
+MIN_LOGO_HEIGHT = 100 - NAVIGATION_MENU_HEIGHT
 LOGO_HEIGHT = MIN_LOGO_HEIGHT + 0
 TITLE_HEIGHT_ALIGNED_WITH_LOGO = LOGO_HEIGHT + 28
 TITLE_HEIGHT = TITLE_HEIGHT_ALIGNED_WITH_LOGO
@@ -35,6 +36,19 @@ def load_images():
     images['logo'] = Image.open(IMG_PATH / 'Orbinox_logo.png')
     images['logo_b64'] = img_to_base64(images['logo'])
     return(images)
+
+def get_resistant_materials(concentration, temperature):
+    resistant_materials = []
+    curves_by_name = load_curves()
+    for name, curve in curves_by_name.items():
+        if curve.is_resistant(concentration, temperature):
+            resistant_materials.append(name)
+
+    if 'Punto de ebullición' in resistant_materials:
+        resistant_materials.remove('Punto de ebullición')
+    return(resistant_materials)
+
+
 
 def set_selected_coords():
     if (st.session_state['sliders_were_touched']) and ('Concentración_slider' in st.session_state) and ('Temperatura_slider' in st.session_state):
@@ -93,7 +107,7 @@ def generate_logo(images):
                 unsafe_allow_html = True)
 
 def generate_title_and_logo(images):
-    title_column, logo_column = st.columns([5, 1])
+    title_column, logo_column = st.columns([3, 1])
     with title_column:
         generate_title()
     with logo_column:
@@ -137,7 +151,7 @@ def generate_graph_from_toggles_and_sliders_and_checkbox():
                 curves_to_show = curves_to_show + FAMILY_TO_CURVE_NAMES[family]
 
     selected_coords = set_selected_coords()
-    graph = backend_sulfuric.generate_graph(curves_to_show, selected_coords, chlorides_message)
+    graph = generate_graph(curves_to_show, selected_coords, chlorides_message)
     st.altair_chart(graph, width = 'stretch', height = GRAPH_HEIGHT)#, key = 'Gráfico')
 
 def generate_sliders():
@@ -185,7 +199,7 @@ def print_resistant_materials(concentration, temperature):
         pass
 
     chlorides_checked = st.session_state['Ácido con cloruros_checkbox']
-    resistant_materials = backend_sulfuric.get_resistant_materials(concentration, temperature)
+    resistant_materials = get_resistant_materials(concentration, temperature)
     if chlorides_checked:
         resistant_materials = [material for material in resistant_materials if material in FAMILY_TO_CURVE_NAMES['Metales (ácido con cloruros)']]
 

@@ -9,14 +9,39 @@ div.stButton > button {
 li[role = 'option'] {
     color: #3e4c59 !important;
 }
-
 div.stSelectbox div[data-baseweb = 'select'] > div {
     color: #3e4c59 !important;
 }
 
-
-/* Only normal Markdown text */
-div[data-testid="stMarkdownContainer"] p {
+/* Normal markdown text, titles, headers, and subheaders */
+div[data-testid='stMarkdownContainer'] h1,
+div[data-testid='stMarkdownContainer'] h2,
+div[data-testid='stMarkdownContainer'] h3,
+div[data-testid='stMarkdownContainer'] h4,
+div[data-testid = 'stMarkdownContainer'] p {
     color: #3e4c59 !important;
 }
+
+/* Secondary button colors */
+button[kind="secondary"] {
+    background-color: #dceaf5 !important;
+    border: 1px solid #cddfeb !important;
+}
+button[kind="secondary"]:hover {
+    background-color: #c2d6e6 !important;
+    border-color: #c2d6e6 !important;
+}
+button[kind="secondary"]:active {
+    background-color: #dceaf5 !important;
+    border-color: #cddfeb !important;
+}
+
+
+
+/* All markdown text                              */
+
+/* div[data-testid = 'stMarkdownContainer'] * {   */
+/*    color: #3e4c59;                             */
+/* }                                              */
+
 

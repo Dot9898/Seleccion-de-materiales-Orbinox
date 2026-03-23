@@ -8,24 +8,23 @@ from io import BytesIO
 import streamlit as st
 from style import set_style
 from streamlit_searchbox import st_searchbox
-from backend import get_data
+from backend import load_data
 from backend import make_fluid_search
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 
-MAIN_TEXT_COLOR = '#3e4c59'
 LOGO_WIDTH = 200
-MIN_LOGO_HEIGHT = 100
+NAVIGATION_MENU_HEIGHT = 35
+MIN_LOGO_HEIGHT = 100 - NAVIGATION_MENU_HEIGHT
 LOGO_HEIGHT = MIN_LOGO_HEIGHT + 0
 TITLE_HEIGHT_ALIGNED_WITH_LOGO = LOGO_HEIGHT + 28
 TITLE_HEIGHT = TITLE_HEIGHT_ALIGNED_WITH_LOGO
 
 QUALITY_COLOR_WIDTH = 12
-DIVIDER_COLOR = '#1F84B5'
+DIVIDER_COLOR = '#a1cae4'
 DIVIDER_AND_BUTTONS_SPACING = 18
 EXTRA_SPACING_TO_FIX_FIRST_BOTTOM_SCROLL = 1000
-
 
 
 
@@ -111,8 +110,8 @@ def horizontal_divider(color, thickness, margin):
 def generate_title():
     st.markdown(f"""
                 <div style="display: flex; flex-direction: column; justify-content: flex-end; height: {TITLE_HEIGHT}px;">
-                    <h4 style="margin: 0; font-size: 2.9rem; font-weight: 450; color: {MAIN_TEXT_COLOR}">
-                        Selección de series
+                    <h4 style="margin: 0; font-size: 2.9rem; font-weight: 450;">
+                        Resistencia química de materiales
                     </h4>
                 </div>
                 """,
@@ -133,7 +132,7 @@ def generate_logo(images):
                 unsafe_allow_html = True)
 
 def generate_title_and_logo(images):
-    title_column, empty_column, logo_column = st.columns([3, 2, 1])
+    title_column, logo_column = st.columns([3, 1])
     with title_column:
         generate_title()
     with logo_column:
@@ -187,7 +186,10 @@ def generate_letter_buttons(fluid_initials):
         current_column = initials_columns[index]
         initial = fluid_initials[index]
         with current_column:
-            if st.button(initial):
+            if st.button(initial, 
+                         key = f'{initial}_button', 
+                         width = 'stretch', 
+                         type = 'primary'):
                 selected_initial = initial
     if selected_initial is not None:
         st.session_state['fluid_source'] = 'initial'
@@ -207,7 +209,10 @@ def generate_fluids_buttons_by_condition(fluids, condition, selected_condition):
             except:
                 return()
             with current_column:
-                if st.button(fluid.name):
+                if st.button(fluid.name, 
+                             key = f'{fluid.name}_button', 
+                             width = 'stretch', 
+                             type = 'secondary'):
                     st.session_state['selected_fluid'] = fluid
                     scroll_to_bottom()
 
@@ -286,7 +291,7 @@ def generate_legend(images):
 #-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
-data = get_data()
+data = load_data()
 images = load_images()
 materials = data['materials']
 fluids = data['fluids']

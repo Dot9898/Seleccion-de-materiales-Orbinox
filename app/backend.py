@@ -124,7 +124,8 @@ def clean_string(string):
     string = string.lower()
     return(string)
 
-def _load_data():
+@lru_cache
+def load_data():
 
     with open(DATA_PATH / 'values.csv', mode ='r', encoding = 'utf-8') as file:
         csv_values = csv.reader(file)
@@ -224,40 +225,6 @@ def make_fluid_search(fluids):
         search_results = equal_start_search_results + other_results_searchterm_in_fluid_name + other_results_searchterm_word_in_fluid_name
         return(search_results)
     return(fluid_search)
-
-@lru_cache(maxsize = 1)
-def get_data(edit_this_string_to_force_cache_clear_in_streamlit_cloud = 'v5'):
-    return(_load_data())
-
-
-
-def test():
-    data = _load_data()
-    fluids = data['fluids']
-    initials = set()
-    for fluid in fluids:
-        initials.add(fluid.name[0])
-    initials = sorted(initials)
-    print(initials)
-    #for fluid in fluids:
-    #    print(fluid)
-
-#unidecode(string)
-
-
-#test()
-
-#'fluids', 'materials', 'fluid_families', 'fluid_name_to_Fluid', 'material_name_to_Material'
-
-
-
-
-
-
-
-
-
-
 
 
 
