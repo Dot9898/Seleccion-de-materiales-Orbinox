@@ -253,10 +253,13 @@ def write_chlorides_info(): #unused
 
 if 'sliders_were_touched' not in st.session_state:
     st.session_state['sliders_were_touched'] = False
+if 'Ácido con cloruros_checkbox' not in st.session_state:
+    st.session_state['Ácido con cloruros_checkbox'] = False
+    chlorides_checkbox_callback()
 
 
 set_style()
-st.set_page_config(layout = 'wide')
+st.set_page_config(layout = 'centered')
 
 images = load_images()
 generate_title_and_logo(images)
@@ -267,7 +270,9 @@ add_vertical_spacing(TITLE_AND_TOGGLES_SPACING)
 generate_graph_from_toggles_and_sliders_and_checkbox()
 generate_chlorides_checkbox()
 generate_toggles()
+st.write('')
 generate_sliders()
+st.write('')
 print_resistant_materials(st.session_state['Concentración_slider'], st.session_state['Temperatura_slider'])
 
 
