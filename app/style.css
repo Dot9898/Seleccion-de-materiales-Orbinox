@@ -38,10 +38,10 @@ button[kind="secondary"]:active {
 
 
 
-/* All markdown text                              */
+/* All markdown text */
 
-/* div[data-testid = 'stMarkdownContainer'] * {   */
-/*    color: #3e4c59;                             */
-/* }                                              */
+div[data-testid = 'stMarkdownContainer'] * {
+   color: #3e4c59 !important;
+}
 
 

@@ -14,15 +14,14 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 
 MAIN_TEXT_COLOR = '#3e4c59'
-LOGO_WIDTH = 200
-NAVIGATION_MENU_HEIGHT = 35
-MIN_LOGO_HEIGHT = 100 - NAVIGATION_MENU_HEIGHT
-LOGO_HEIGHT = MIN_LOGO_HEIGHT + 0
-TITLE_HEIGHT_ALIGNED_WITH_LOGO = LOGO_HEIGHT + 28
-TITLE_HEIGHT = TITLE_HEIGHT_ALIGNED_WITH_LOGO
+EMPTY_SPACE = '‎'
+LOGO_WIDTH = 150
+MIN_LOGO_HEIGHT = 10
+LOGO_HEIGHT = MIN_LOGO_HEIGHT
+
 TITLE_AND_TOGGLES_SPACING = 20
 
-GRAPH_HEIGHT = 550 #'stretch'
+GRAPH_HEIGHT = 'stretch'
 
 
 def img_to_base64(img):
@@ -83,35 +82,45 @@ def add_vertical_spacing(pixels):
     st.markdown(f"<div style='height: {pixels}px;'></div>", unsafe_allow_html = True)
 
 def generate_title():
-    st.markdown(f"""
-                <div style="display: flex; flex-direction: column; justify-content: flex-end; height: {TITLE_HEIGHT}px;">
-                    <h4 style="margin: 0; font-size: 2.9rem; font-weight: 450; color: {MAIN_TEXT_COLOR}">
-                        Resistencia química al ácido sulfúrico
-                    </h4>
-                </div>
-                """,
-                unsafe_allow_html = True)
+    #Needs html to center, markdown creates extra spacing
+    st.html(f"""
+    <div style="text-align: center;">
+        <h3 style="
+            margin: 0;
+            line-height: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 450;
+            color: {MAIN_TEXT_COLOR};
+        ">
+            Resistencia química al ácido sulfúrico
+        </h3>
+    </div>
+    """)
 
-def generate_logo(images):
-    logo = images['logo_b64']
+def generate_logo(logo_b64):
     st.markdown(f"""
                 <div style="
-                    display: flex;
+                    display: flex; flex-direction: column;
                     justify-content: flex-end;
-                    align-items: flex-end;
+                    align-items: center;
                     height: {LOGO_HEIGHT}px;
                 ">
-                    <img src="data:image/webp;base64,{logo}" width="{LOGO_WIDTH}">
+                    <img src="data:image/webp;base64,{logo_b64}" width="{LOGO_WIDTH}">
                 </div>
                 """,
                 unsafe_allow_html = True)
 
 def generate_title_and_logo(images):
-    title_column, logo_column = st.columns([3, 1])
-    with title_column:
-        generate_title()
-    with logo_column:
-        generate_logo(images)
+    logo = images['logo_b64']
+    generate_logo(logo)
+    st.write('')
+    st.write('')
+    generate_title()
+    st.write('')
 
 def generate_toggles():
     columns = st.columns([1] * 4)
@@ -151,7 +160,7 @@ def generate_graph_from_toggles_and_sliders_and_checkbox():
                 curves_to_show = curves_to_show + FAMILY_TO_CURVE_NAMES[family]
 
     selected_coords = set_selected_coords()
-    graph = generate_graph(curves_to_show, selected_coords, chlorides_message)
+    graph = generate_graph(curves_to_show, selected_coords, chlorides_message = False, mobile = True)
     st.altair_chart(graph, width = 'stretch', height = GRAPH_HEIGHT)#, key = 'Gráfico')
 
 def generate_sliders():
@@ -196,7 +205,9 @@ def print_family(family, resistant_materials):
 
 def print_resistant_materials(concentration, temperature):
     if concentration is None or temperature is None:
-        pass
+        return()
+    if not st.session_state['sliders_were_touched']:
+        return()
 
     chlorides_checked = st.session_state['Ácido con cloruros_checkbox']
     resistant_materials = get_resistant_materials(concentration, temperature)
@@ -252,15 +263,12 @@ generate_title_and_logo(images)
 
 add_vertical_spacing(TITLE_AND_TOGGLES_SPACING)
 
-graph_column, sliders_column = st.columns([4, 1])
-with sliders_column:
-    generate_chlorides_checkbox()
-with graph_column:
-    generate_toggles()
-    generate_graph_from_toggles_and_sliders_and_checkbox()
-with sliders_column:
-    generate_sliders()
-    print_resistant_materials(st.session_state['Concentración_slider'], st.session_state['Temperatura_slider'])
+
+generate_graph_from_toggles_and_sliders_and_checkbox()
+generate_chlorides_checkbox()
+generate_toggles()
+generate_sliders()
+print_resistant_materials(st.session_state['Concentración_slider'], st.session_state['Temperatura_slider'])
 
 
 

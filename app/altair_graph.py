@@ -55,7 +55,7 @@ MESSAGES_SIZE = 14
 MESSAGES_COLOR = '#3e4c59'
 
 #debug
-CURVES_POINTS_OPACITY = 0 #unused
+CURVES_POINTS_OPACITY = 0. #unused
 LATTICE_POINTS_RADIUS = 10 #unused
 LATTICE_POINTS_OPACITY = 0 #unused
 HOVERED_CURVE_OPACITY = 1.0 #unused
@@ -63,6 +63,7 @@ NON_HOVERED_CURVE_OPACITY = 0.4 #unused
 
 CLICKED_POINT_AREA = PI * CLICKED_POINT_RADIUS ** 2
 CURVES_POINTS_AREA = PI * CURVES_POINTS_RADIUS ** 2
+CURVES_POINTS_AREA_MOBILE = PI * (CURVES_POINTS_RADIUS + 3) ** 2
 LATTICE_POINTS_AREA = PI * LATTICE_POINTS_RADIUS ** 2 #unused
 
 
@@ -189,7 +190,7 @@ def add_messages(chart, anchor_point):
         chart += layer
     return(chart)
 
-def generate_graph(curves_to_show, highlighted_point_coordinates, chlorides_message):
+def generate_graph(curves_to_show, highlighted_point_coordinates, chlorides_message, mobile = False):
     all_curves_data = load_all_curves_data()
     lattice_data = load_lattice_data()
     altair.data_transformers.disable_max_rows()
@@ -209,14 +210,18 @@ def generate_graph(curves_to_show, highlighted_point_coordinates, chlorides_mess
     names = curves_to_show
     colors = [CURVE_NAME_TO_COLOR[name] for name in names]
     scale = altair.Scale(domain = names, range = colors)
-    legend = altair.Legend(title = None, columns = LEGEND_COLUMNS, orient = LEGEND_ORIENTATION, symbolOpacity = 1)#, symbolStrokeWidth = 3)
+    if not mobile:
+        legend = altair.Legend(title = None, columns = LEGEND_COLUMNS, orient = LEGEND_ORIENTATION, symbolOpacity = 1)#, symbolStrokeWidth = 3)
+    else:
+        legend = None
     color = altair.Color('Material', scale = scale, legend = legend)
     curves_base = curves_base.encode(color = color)
 
     hovered_curve = altair.selection_point(on = 'pointerover', fields = ['Material'], empty = False)
     clicked_curve = altair.selection_point(fields = ['Material'], on = 'click', empty = False)
 
-    curve_points = curves_base.mark_circle(size = CURVES_POINTS_AREA, opacity = CURVES_POINTS_OPACITY, clip = True)
+    curve_points_area = CURVES_POINTS_AREA_MOBILE if mobile else CURVES_POINTS_AREA_MOBILE
+    curve_points = curves_base.mark_circle(size = curve_points_area, opacity = CURVES_POINTS_OPACITY, clip = True)
     curve_points = curve_points.add_params(hovered_curve)
 
     lines = curves_base.mark_line(interpolate = 'monotone', clip = True)

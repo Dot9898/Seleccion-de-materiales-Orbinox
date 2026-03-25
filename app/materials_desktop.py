@@ -14,6 +14,7 @@ from backend import make_fluid_search
 ROOT_PATH = Path(__file__).resolve().parent.parent
 IMG_PATH = ROOT_PATH / 'img'
 
+EMPTY_SPACE = '‎'
 LOGO_WIDTH = 200
 NAVIGATION_MENU_HEIGHT = 35
 MIN_LOGO_HEIGHT = 100 - NAVIGATION_MENU_HEIGHT
@@ -41,6 +42,9 @@ def img_to_base64(img):
     img.save(buffer, format="PNG")
     return(base64.b64encode(buffer.getvalue()).decode())
 
+def write_justified_and_centered_text(text):
+    st.markdown(f"<p style='text-align: justify; text-align-last: center'>{text}</p>", unsafe_allow_html = True)
+
 @st.cache_resource
 def load_images():
     images = {}
@@ -53,6 +57,9 @@ def load_images():
     images['22'] = Image.open(IMG_PATH / 'twenty_two.jpg')
     images['48'] = Image.open(IMG_PATH / 'forty_eight.jpg')
     return(images)
+
+def disable_disclaimer():
+    st.session_state['show_disclaimer'] = False
 
 def scroll_to_bottom():
     st.markdown('<meta http-equiv = "refresh" content = "0; url = #b">', unsafe_allow_html = True)
@@ -107,11 +114,22 @@ def horizontal_divider(color, thickness, margin):
         unsafe_allow_html=True,
     )
 
+@st.dialog(EMPTY_SPACE, width = 'medium', on_dismiss = disable_disclaimer)
+def generate_disclaimer(logo):
+    logo_column = st.columns([1, 1, 1])[1]
+    with logo_column:
+        st.image(logo, width = 'stretch')
+    st.write('')
+    text = 'La selección de materiales Orbinox se ofrece exclusivamente como recomendación. \
+            Orbinox no garantiza precisión, conveniencia, ni durabilidad de las selecciones aquí descritas. \
+            Para más información, contactar con nuestro equipo de ingenieros.'
+    write_justified_and_centered_text(text)
+
 def generate_title():
     st.markdown(f"""
                 <div style="display: flex; flex-direction: column; justify-content: flex-end; height: {TITLE_HEIGHT}px;">
                     <h4 style="margin: 0; font-size: 2.9rem; font-weight: 450;">
-                        Resistencia química de materiales
+                        Selección de materiales
                     </h4>
                 </div>
                 """,
@@ -317,7 +335,11 @@ if 'last_only_inOrbinox' not in st.session_state:
     st.session_state['last_only_inOrbinox'] = False
 if 'last_only_resistant' not in st.session_state:
     st.session_state['last_only_resistant'] = False
+if 'show_disclaimer' not in st.session_state:
+    st.session_state['show_disclaimer'] = True
 
+if st.session_state['show_disclaimer']:
+    generate_disclaimer(images['logo'])
 
 generate_title_and_logo(images)
 generate_searchbars(fluids, fluid_families, fluid_name_to_Fluid)

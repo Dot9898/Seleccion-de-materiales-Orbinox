@@ -5,3 +5,6 @@ unidecode
 pandas
 numpy
 altair
+streamlit-screen-stats
+streamlit-browser-session-storage
+streamlit-local-storage
